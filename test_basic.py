@@ -8,8 +8,9 @@ grid = [[0]*11 for _ in range(11)]
 position_x = 6
 position_y = 0
 position_z = 0
-dest_x = 10
-dest_y = 5
+length = 3
+dest_x = 7
+dest_y = 10
 dest_z = 0
 depth = 0
 max_depth = 1
@@ -26,7 +27,6 @@ def fil_in_grid(x1,y1,x2,y2, depth1, object_counter):
     y_max = max(x1, x2)
     depth = depth1
 
-
     for x in range(x_min, x_max+1):
         for y in range(y_min,y_max+1):
             grid[x][y] = depth
@@ -35,23 +35,54 @@ def fil_in_grid(x1,y1,x2,y2, depth1, object_counter):
             else:
                 right_count = right_count + 1
     print ":::::::::::::::::::::::::::::::::::::::::::::::::::::: "
+
 def state2(left_or_right):
         global position_x, position_y, position_z
         if(left_or_right == 0):
             print "turning right"
+            turn_view(0)
+            print "moving"
             position_x += math.sin(math.pi/6)*depth
             position_y += math.cos(math.pi/6)*depth
-            position_x = abs(position_x)
-            position_y = abs(position_y)
+            position_x = (position_x)
+            position_y = (position_y)
         else:
             print "turning left"
-            position_x += math.sin(math.pi/6)*depth
-            position_y += math.cos(math.pi/6)*depth
-            position_x = abs(position_x)
-            position_y = abs(position_y)
-            print position_y
+            turn_view(1)
+            print "moving"
+            position_x += math.sin(-(math.pi/6))*depth
+            position_y += math.cos(-(math.pi/6))*depth
+            position_x = (position_x)
+            position_y = (position_y)
 
         print "Current Position: " + "( " + str(position_x) + " , " + str(position_y) + " , " + str(position_z) + " )"
+
+def turn_view(left_or_right):
+        global position_x, position_y, position_z
+        change_in_position = 0
+        grid2 = [[0]*11 for _ in range(11)]
+        if left_or_right == 1: #right
+            change_in_position = -2
+        else:
+            change_in_position = 2
+
+        for y in range(11):
+            for x in range(11):
+                if( (y + change_in_position) < 0 or  (y + change_in_position) > 10 ):
+                    grid2[x][y] = 0
+                else:
+                    grid2[x][y + change_in_position] = grid[x][y]
+                #if(grid[x][y] != 0):
+                    #grid[x][y] = 0
+                #    print "-" ,
+                #else:
+                    #grid[x][y] = grid2[x + change_in_position][y]
+                #    print "+" ,
+        print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!changing view 2, Bitch!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        for x in range(11):
+            for y in range(11):
+                print grid2[x][y] ,
+            print
 
 def state1(inputs, length):
     print "count of objects " + str(inputs[0])
@@ -76,24 +107,36 @@ def state1(inputs, length):
         state2(0)
 
 def state_no_obj_in_front():
+    print "No Object in front"
     global position_x, position_y, max_depth
     dif_x = dest_x - position_x
     dif_y = dest_y - position_y
     distance_btw_points = math.sqrt( pow((dest_y - position_y),2) + pow((dest_x - position_x),2))
-    if distance_btw_points < 1.0:
+    if distance_btw_points <1.0:
         depth = distance_btw_points
+        print "Distance btw points: " + str(distance_btw_points)
     else:
         depth = 1.0
 
-    angle = abs(math.asin( dif_x / distance_btw_points))
+    for x in range(11):
+        for y in range(11):
+            grid[x][y] = 0
+    print "zeroed bitch !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    '''for x in range(11):
+        for y in range(11):
+            print grid[x][y] ,
+        print
+    '''
+
+    angle = (math.asin( dif_x / distance_btw_points))
     position_x += math.sin(angle) * depth
     position_y += math.cos(angle) * depth
     print "Destination Position: " + "( " + str(dest_x) + " , " + str(dest_y) + " , " + str(dest_z) + " )"
 
 def check_position():
     print "checking position"
-    dif_x = dest_x - position_x
-    dif_y = dest_y - position_y
+    dif_x = abs(dest_x - position_x)
+    dif_y = abs(dest_y - position_y)
     if (dif_x <1 and  dif_y <1 ):
         print "at Destination"
         sys.exit("exit: At Destination")
@@ -130,13 +173,18 @@ while line:
         line = text.readline()
 #print len(inputs)
     if state1_go == 1:
-        state1(inputs, len(inputs))
         state1_go = 0
+        state1(inputs, len(inputs))
+        inputs = []
+        left_count = 0
+        right_count = 0
     else:
         state_no_obj_in_front()
     print " Else Current Position: " + "( " + str(position_x) + " , " + str(position_y) + " , " + str(position_z) + " )"
     check_position()
     line = text.readline()
+    print ":::::::::::::::::::::::::::::::::::::::::::::::::::::: "
+
 
 
 
