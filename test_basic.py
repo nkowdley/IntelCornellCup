@@ -8,8 +8,8 @@ grid = [[0]*11 for _ in range(11)]
 position_x = 6
 position_y = 0
 position_z = 0
-dest_x = 5
-dest_y = 10
+dest_x = 10
+dest_y = 5
 dest_z = 0
 depth = 0
 max_depth = 1
@@ -53,11 +53,6 @@ def state2(left_or_right):
 
         print "Current Position: " + "( " + str(position_x) + " , " + str(position_y) + " , " + str(position_z) + " )"
 
-
-
-
-
-
 def state1(inputs, length):
     print "count of objects " + str(inputs[0])
     pixel_counter = 0
@@ -90,7 +85,7 @@ def state_no_obj_in_front():
     else:
         depth = 1.0
 
-    angle = abs(math.atan( dif_y / dif_x))
+    angle = abs(math.asin( dif_x / distance_btw_points))
     position_x += math.sin(angle) * depth
     position_y += math.cos(angle) * depth
     print "Destination Position: " + "( " + str(dest_x) + " , " + str(dest_y) + " , " + str(dest_z) + " )"
@@ -101,7 +96,7 @@ def check_position():
     dif_y = dest_y - position_y
     if (dif_x <1 and  dif_y <1 ):
         print "at Destination"
-        sys.exit("At Destination")
+        sys.exit("exit: At Destination")
 
 
 #####################################################################
